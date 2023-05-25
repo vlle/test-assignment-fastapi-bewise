@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from pydantic.types import UUID4
 
+
 class UserInput(BaseModel):
     nick: str
 
@@ -10,6 +11,7 @@ class UserInput(BaseModel):
                 "nick": "vlle",
             }
         }
+
 
 class UserOutput(BaseModel):
     id: int
@@ -22,4 +24,3 @@ class UserOutput(BaseModel):
                 "uuid": "123e4567-e89b-12d3-a456-426655440000",
             }
         }
-

@@ -4,8 +4,10 @@ from datetime import datetime
 
 from sqlalchemy.sql import functions
 
+
 class Base(DeclarativeBase):
     pass
+
 
 class QuizQuestion(Base):
     __tablename__ = "quiz_question"

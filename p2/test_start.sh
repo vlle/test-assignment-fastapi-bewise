@@ -5,7 +5,7 @@ docker run -d --name test  -p 5432:5432  -e POSTGRES_USER=postgres  -e POSTGRES_
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-python -m pytest app/
+python -m pytest -v app/ 
 deactivate
 docker stop test
 docker rm test
