@@ -53,7 +53,7 @@ async def post_quiz_questions(
         )
 
     data = await get_quiz_questions(questions_num.question_num, QUIZ_LINK)
-    if len(data) < 1:
+    if not data:
         raise HTTPException(
             status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="something went wrong with external api",
