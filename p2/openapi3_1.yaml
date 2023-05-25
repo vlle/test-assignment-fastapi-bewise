@@ -1,0 +1,148 @@
+openapi: 3.1.0
+info:
+  title: Quiz
+  description: |-
+    Test project created for Bewise.ai by Artemii Kulikov
+
+  contact:
+    email: aapqwhat@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+servers:
+  - url: https://127.0.0.1:8000/
+tags:
+  - name: audio-server
+    description: Part 2//  REST api
+paths:
+  /user:
+    post:
+      tags:
+        - question
+      summary: Create user in service
+      description: Create user in service via sending nickname in request body
+      operationId: createUserInDB
+      requestBody:
+          description: UserInput
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInput"
+      responses:
+        '201':
+          description: User successfully created. Returns user ID and UUID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserOutput"
+        '413':
+          description: User was not created due to DataError.
+  /audio:
+    post:
+      tags:
+        - question
+      summary: Upload audio
+      description: Upload .wav audio in service and convert it to .mp3
+      operationId: createAudio
+      requestBody:
+        description: ID and UUID
+        content:
+          multipart/form-data:
+            schema: 
+              $ref: "#/components/schemas/UserUpload"
+      responses:
+        '201':
+          description: Audio successfully uploaded. Returns download link
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Download"
+
+        '415':
+          description: You are uploading unsupported format. Use .wav only
+        '503':
+          description: Integrity Error at server database
+  /record:
+    get:
+      tags:
+        - question
+      summary: Download .mp3
+      description: Downoad .mp3 from server
+      operationId: downloadAdio
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the audio to get.
+        - in: query
+          name: user
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get.
+      responses:
+        '201':
+          description: Audio file located at server
+          content:
+            audio/mpeg:
+              schema:
+                type: string
+                format: binary   
+        '403':
+          description: This user is not allowed to download specified audio
+        '404':
+          description: There is no audio with that numeric ID
+
+components:
+  schemas:
+    UserInput:
+      required:
+        - nickname
+      type: object
+      properties:
+        nickname:
+          type: string
+          example: vlle
+    UserOutput:
+      required:
+        - id
+        - uuid
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        uuid:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+    UserUpload:
+      required:
+        - id
+        - uuid
+        - file
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        uuid:
+          type: string
+          format: uuid
+          example: 123e4567-e89b-12d3-a456-426655440000
+        file:
+          type: string
+          format: binary
+    Download:
+      required:
+        - link
+      type: object
+      properties:
+        link:
+          type: string
+          example: http://localhost:8000/record?id=2&user=2
+

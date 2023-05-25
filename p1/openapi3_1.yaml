@@ -1,0 +1,74 @@
+openapi: 3.1.0
+info:
+  title: Quiz
+  description: |-
+    Test project created for Bewise.ai by Artemii Kulikov
+
+  contact:
+    email: aapqwhat@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+servers:
+  - url: https://127.0.0.1:8000/
+tags:
+  - name: question
+    description: Part 1//  REST api
+paths:
+  /questions:
+    post:
+      tags:
+        - question
+      summary: Creates questions in DB
+      description: Get selected amount of quiz questions from jservice.io/ and pastes them into PostgreSQL database
+      operationId: createQuestionFromJService
+      requestBody:
+        description: Amount of quiz questions you want to import
+        content:
+          application/json:
+            schema: 
+              $ref: "#/components/schemas/QuestionNum"
+      responses:
+        '201':
+          description: Questions successfuly imported. Returns last quiz question imported before this operation (null at first)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuizQuestion"
+        '422':
+          description: Invalid input (No output if amount of questions was equal or below zero)
+        '503':
+          description: External API service unavailable
+
+components:
+  schemas:
+    QuestionNum:
+      required:
+        - question_num
+      type: object
+      properties:
+        question_num:
+          type: integer
+          example: 2
+    QuizQuestion:
+      required:
+        - id
+        - question
+        - answer
+        - created_at
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        question:
+          type: string
+          example: What is a capital of Great Britain?
+        answer:
+          type: string
+          example: London
+        created_at:
+          type: string
+          format: date
+          example: 2022-12-30 20:57:36.971
