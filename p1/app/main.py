@@ -91,7 +91,7 @@ async def post_quiz_questions(
                         "created_at": d["created_at"],
                     }
                     converted_data.append(item)
-                    unique_questions.add(d["question"])
+                    unique_questions.add(d["id"])
                     current_len += 1
             except TypeError:
                 break
