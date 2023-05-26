@@ -1,4 +1,3 @@
-from io import BytesIO
 from sqlalchemy import and_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import Audio, User
@@ -20,9 +19,9 @@ async def is_there_user(session: AsyncSession, user: UserOutput) -> bool:
     return u is not None
 
 
-async def save_music(session: AsyncSession, file: BytesIO, user_id: int) -> int:
+async def save_music(session: AsyncSession, file: str, user_id: int) -> int:
     async with session.begin():
-        u = Audio(mp3=file.read(), user_id=user_id)
+        u = Audio(mp3=file, user_id=user_id)
         session.add(u)
     return u.id
 

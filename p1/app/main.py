@@ -7,6 +7,7 @@ from app.network import get_quiz_questions
 from httpx import ReadTimeout
 from app.crud import last_question, save_quiz, get_all_questions
 from app.database import engine
+from app.schemas import Question
 
 from pydantic import BaseModel
 
@@ -53,7 +54,7 @@ async def db_connection():
 @app.post("/questions", status_code=201)
 async def post_quiz_questions(
     questions_num: QuestionNum, session: AsyncSession = Depends(db_connection)
-):  # -> Question | None:
+) -> Question | None:
     if questions_num.question_num <= 0:
         raise HTTPException(
             status.HTTP_422_UNPROCESSABLE_ENTITY, detail="number cannot be less than 1"
@@ -107,5 +108,4 @@ async def post_quiz_questions(
                 break
 
     await save_quiz(session, converted_data)
-    await session.close()
     return last_question_before_import

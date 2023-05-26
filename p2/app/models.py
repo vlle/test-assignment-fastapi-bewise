@@ -1,7 +1,6 @@
 from pydantic import UUID4
 from sqlalchemy import UUID, ForeignKey, String, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy.types import LargeBinary
 
 
 class Base(DeclarativeBase):
@@ -28,7 +27,7 @@ class Audio(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    mp3: Mapped[bytes] = mapped_column(LargeBinary)
+    mp3: Mapped[str] = mapped_column(String(100))
     uuid: Mapped[UUID4] = mapped_column(UUID, server_default=text("gen_random_uuid()"))
 
     def __repr__(self) -> str:

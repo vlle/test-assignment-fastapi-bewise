@@ -16,6 +16,7 @@ async def init_models(engine: AsyncEngine):
 
 load_dotenv()
 DATABASE_URL = os.environ.get("DATABASE_URL")
+MEDIA = os.environ.get("MEDIA")
 
 if not DATABASE_URL:
     raise MissingEnvironmentVariable

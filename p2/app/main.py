@@ -1,12 +1,13 @@
+import shutil
 from contextlib import asynccontextmanager
 from typing import Annotated
 from fastapi import Depends, FastAPI, Form, HTTPException, UploadFile, status, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse
 from pydantic import UUID4
 from pydub.audio_segment import CouldntDecodeError
 from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.database import init_models, maker, engine
+from app.database import init_models, maker, engine, MEDIA
 from app.schemas import UserInput, UserOutput
 from app.crud import (
     is_there_user,
@@ -67,12 +68,23 @@ async def save_as_mp3_and_convert_link(
 
         sound.export(music_buff, format="mp3")
         music_buff.seek(0)
+
+        if not file.filename:
+            raise HTTPException(
+                status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                detail="wrong format, give filename",
+            )
+
+        file_location = f"{MEDIA}/{file.filename[:-3] + '.mp3'}"
+        with open(file_location, "wb+") as file_object:
+            shutil.copyfileobj(music_buff, file_object)
+
     except CouldntDecodeError:
         raise HTTPException(
             status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail="wrong format, use .wav"
         )
     try:
-        audio_id = await save_music(session, music_buff, user.id)
+        audio_id = await save_music(session, file_location, user.id)
         download_link = (
             str(request.url_for("get_audio")) + "?id={audio_id}&user={user_id}"
         )
@@ -94,4 +106,5 @@ async def get_audio(id: int, user: int, session: AsyncSession = Depends(db_conne
         raise HTTPException(
             status.HTTP_403_FORBIDDEN, detail="you are not allowed to download file"
         )
-    return StreamingResponse(BytesIO(audio.mp3), media_type="audio/mpeg")
+
+    return FileResponse(audio.mp3, media_type="audio/mpeg")
