@@ -75,7 +75,7 @@ async def save_as_mp3_and_convert_link(
                 detail="wrong format, give filename",
             )
 
-        file_location = f"{MEDIA}/{file.filename[:-3] + '.mp3'}"
+        file_location = f"{MEDIA}/{file.filename[:-3] + 'mp3'}"
         with open(file_location, "wb+") as file_object:
             shutil.copyfileobj(music_buff, file_object)
 
