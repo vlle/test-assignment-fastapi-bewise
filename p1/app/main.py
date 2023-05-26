@@ -24,22 +24,22 @@ class QuestionNum(BaseModel):
         }
 
 
+unique_questions = set()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_models(engine)
-    app.state.unique_questions = set()
     async with AsyncSession(engine) as session:
-        unique_questions = await get_all_questions(session)
-
-    if unique_questions:
-        for q in unique_questions:
-            app.state.unique_questions.add(q)
+        questions_from_db = await get_all_questions(session)
+    if questions_from_db:
+        for q in questions_from_db:
+            unique_questions.add(q)
     yield
     await engine.dispose()
 
 
 app = FastAPI(lifespan=lifespan)
-app.state.unique_questions = set()
 
 
 async def db_connection():
@@ -82,7 +82,7 @@ async def post_quiz_questions(
     while current_len < questions_num.question_num:
         for d in data:
             try:
-                if d["id"] not in app.state.unique_questions:
+                if d["id"] not in unique_questions:
                     item = {
                         "id": d["id"],
                         "answer": d["answer"],
@@ -90,7 +90,7 @@ async def post_quiz_questions(
                         "created_at": d["created_at"],
                     }
                     converted_data.append(item)
-                    app.state.unique_questions.add(d["question"])
+                    unique_questions.add(d["question"])
                     current_len += 1
             except TypeError:
                 break
