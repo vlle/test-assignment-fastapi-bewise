@@ -2,11 +2,13 @@
 
 cp env.example app/.env
 docker pull postgres
-docker run -d --name test  -p 5432:5432  -e POSTGRES_USER=postgres  -e POSTGRES_PASSWORD=postgres  -e POSTGRES_DB=postgres postgres -N 2000
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python -m pytest -v app/ 
-deactivate
-docker stop test
-docker rm test
+docker network create test_network
+docker run --network=test_network -d --name test -p 5432:5432 \
+       -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres \
+       -e POSTGRES_DB=postgres postgres -N 2000
+docker build . -t test_python
+docker run --network=test_network --name test_p test_python /bin/bash -c "python -m pytest -v ."
+docker container stop test test_p
+docker container rm test test_p
+docker network rm test_network
+

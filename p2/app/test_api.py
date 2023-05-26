@@ -31,7 +31,7 @@ async def test_is_audio_saved(client: TestClient, model_load):
     response = client.post("/user", json={"nick": "ivan"})
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
-    with open("audio-samples/sample1.wav", "rb") as f:
+    with open("app/sample1.wav", "rb") as f:
         file_bytes = f.read()
     files = {"file": ("testfile.wav", file_bytes)}
     response = client.post(
@@ -46,7 +46,7 @@ async def test_is_audio_downloaded(client: TestClient, model_load):
     response = client.post("/user", json={"nick": "ivan"})
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
-    with open("audio-samples/sample1.wav", "rb") as f:
+    with open("app/sample1.wav", "rb") as f:
         file_bytes = f.read()
     files = {"file": ("testfile.wav", file_bytes)}
     response = client.post(
@@ -65,7 +65,7 @@ async def test_is_audio_access_validated(client: TestClient, model_load):
     response = client.post("/user", json={"nick": "ivan"})
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
-    with open("audio-samples/sample1.wav", "rb") as f:
+    with open("app/sample1.wav", "rb") as f:
         file_bytes = f.read()
     files = {"file": ("testfile.wav", file_bytes)}
     response = client.post(
@@ -89,7 +89,7 @@ async def test_is_user_and_uuid_validated(client: TestClient, model_load):
     response = client.post("/user", json={"nick": "ivan"})
     assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
-    with open("audio-samples/sample1.wav", "rb") as f:
+    with open("app/sample1.wav", "rb") as f:
         file_bytes = f.read()
     files = {"file": ("testfile.wav", file_bytes)}
 
