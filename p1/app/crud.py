@@ -15,11 +15,10 @@ async def get_all_questions(session: AsyncSession) -> Sequence[int] | None:
     return ret_list
 
 
-async def save_quiz(session: AsyncSession, data: list[dict]):
+async def save_quiz(session: AsyncSession, data: list[dict]) -> None:
     stmt = pg_insert(QuizQuestion).values(data)
     async with session.begin():
-        ids = await session.execute(stmt)
-    return ids
+        await session.execute(stmt)
 
 
 async def last_question(session: AsyncSession) -> Question | None:
