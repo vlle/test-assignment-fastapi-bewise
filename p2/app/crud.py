@@ -21,7 +21,7 @@ async def is_there_user(session: AsyncSession, user: UserOutput) -> bool:
 
 async def save_music(session: AsyncSession, file: str, user_id: int) -> int:
     async with session.begin():
-        u = Audio(mp3=file, user_id=user_id)
+        u = Audio(filepath=file, user_id=user_id)
         session.add(u)
     return u.id
 

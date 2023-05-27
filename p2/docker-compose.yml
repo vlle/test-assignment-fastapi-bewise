@@ -5,6 +5,8 @@ services:
     restart: always
     depends_on:
       - db
+    volumes:
+      - mp3_data:/code/audio
     ports:
       - "8000:8010"
   db:
@@ -19,3 +21,4 @@ services:
 
 volumes:
   db_data:
+  mp3_data:

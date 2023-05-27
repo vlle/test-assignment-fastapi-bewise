@@ -18,7 +18,7 @@ load_dotenv()
 DATABASE_URL = os.environ.get("DATABASE_URL")
 MEDIA = os.environ.get("MEDIA")
 
-if not DATABASE_URL:
+if not DATABASE_URL or not MEDIA:
     raise MissingEnvironmentVariable
 
 engine = create_async_engine(DATABASE_URL, echo=True)
