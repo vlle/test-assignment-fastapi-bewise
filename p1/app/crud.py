@@ -6,6 +6,8 @@ from typing import Sequence
 from app.schemas import Question
 from app.models import QuizQuestion
 
+from datetime import datetime
+
 
 async def get_all_questions(session: AsyncSession) -> Sequence[int] | None:
     stmt = select(QuizQuestion.id).where(QuizQuestion.id > 0)
@@ -15,10 +17,18 @@ async def get_all_questions(session: AsyncSession) -> Sequence[int] | None:
     return ret_list
 
 
-async def save_quiz(session: AsyncSession, data: list[dict]) -> None:
-    stmt = pg_insert(QuizQuestion).values(data)
+async def save_quiz(
+    session: AsyncSession, data: list[dict[str, (int | str | datetime)]]
+) -> int:
+    stmt = (
+        pg_insert(QuizQuestion)
+        .on_conflict_do_nothing(index_elements=[QuizQuestion.id])
+        .values(data)
+    )
+    stmt = stmt.returning(QuizQuestion.id)
     async with session.begin():
-        await session.execute(stmt)
+        result = (await session.execute(stmt)).all()
+    return len(result)
 
 
 async def last_question(session: AsyncSession) -> Question | None:
