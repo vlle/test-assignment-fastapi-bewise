@@ -1,20 +1,11 @@
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Sequence
 
 from app.schemas import Question
 from app.models import QuizQuestion
 
 from datetime import datetime
-
-
-async def get_all_questions(session: AsyncSession) -> Sequence[int] | None:
-    stmt = select(QuizQuestion.id).where(QuizQuestion.id > 0)
-    ret_list = []
-    async with session.begin():
-        ret_list = (await session.scalars(stmt)).all()
-    return ret_list
 
 
 async def save_quiz(
