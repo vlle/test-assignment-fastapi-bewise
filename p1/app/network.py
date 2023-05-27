@@ -1,7 +1,5 @@
 from typing import Dict
 import httpx
-from urllib.parse import urlencode,  urljoin
-
 
 
 QUIZ_API_LINK = 'https://jservice.io/api/random'
