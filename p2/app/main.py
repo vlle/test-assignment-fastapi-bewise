@@ -73,7 +73,7 @@ async def save_as_mp3_and_convert_link(
     if not MEDIA:
         raise HTTPException(
             status.HTTP_507_INSUFFICIENT_STORAGE,
-            detail="wrong format, give filename",
+            detail="no media space left at server",
         )
 
     music_buff = BytesIO()
