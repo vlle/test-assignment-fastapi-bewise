@@ -61,7 +61,7 @@ async def post_quiz_questions(
         )
 
     try:
-        data = await get_quiz_questions(questions_num.question_num, QUIZ_LINK)
+        data = await get_quiz_questions(questions_num.question_num)
         if not data:
             raise HTTPException(
                 status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -99,7 +99,7 @@ async def post_quiz_questions(
             # we will ask for more questions to reduce number of external api calls
             try:
                 data = await get_quiz_questions(
-                    questions_num.question_num - current_len * 2, QUIZ_LINK
+                    questions_num.question_num - current_len * 2
                 )
                 # external api may return string error or refuse to give data
                 if not data or isinstance(data, str):
